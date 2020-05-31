@@ -1,0 +1,51 @@
+@import 'variables.scss';
+
+.onlydesktop {
+  display: block;
+
+  @media screen and (max-width: 550px) {
+    display: none;
+  }
+}
+.onlymobile {
+  display: none;
+  @media screen and (max-width: 550px) {
+    display: block;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .ant-layout-sider-collapsed {
+    min-width: 257px !important;
+    max-width: 257px !important;
+  }
+  .image-container {
+    width: 40%;
+    height: 500px;
+    border-radius: 20px;
+  }
+  .login-container {
+    width: 40%;
+    height: 470px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .ant-layout-sider-collapsed {
+    min-width: 0px !important;
+    max-width: 0px !important;
+  }
+  .image-container {
+    width: 100%;
+    height: 300px;
+  }
+  .login-container {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 768px) {
+}

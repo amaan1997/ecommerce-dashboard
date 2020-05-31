@@ -1,0 +1,29 @@
+@import 'variables.scss';
+
+.ant-layout-sider-children,
+.ant-collapse-header {
+  background-color: white;
+}
+.ant-collapse,
+.ant-collapse-icon-position-true,
+.ant-collapse-item {
+  border: none !important;
+}
+.ant-collapse-content {
+  border-top: none;
+}
+
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 0px;
+}
+.ant-layout-sider {
+  min-width: 60px !important;
+  max-width: 60px !important;
+}
+
+.ant-layout {
+  background-color: white;
+}
+.drawer-tab:hover {
+  color: $secondary;
+}

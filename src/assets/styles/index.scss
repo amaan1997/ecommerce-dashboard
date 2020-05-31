@@ -1,0 +1,70 @@
+@import 'base.scss';
+@import 'responsive.scss';
+@import 'variables.scss';
+@import 'spacer.scss';
+@import 'login.scss';
+
+.d-flex {
+  display: flex;
+  flex-direction: row;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.align-center {
+  align-items: center;
+}
+.justify-around {
+  justify-content: space-around;
+}
+
+.text-center {
+  text-align: center;
+}
+.font-20 {
+  font-size: 20px;
+}
+.font-24 {
+  font-size: 24px;
+}
+.text-bold {
+  font-weight: bold;
+}
+.full-width {
+  width: 100%;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.color-grey {
+  color: $default;
+}
+.bg-color-secondary {
+  background-color: $secondary;
+}
+.text-white {
+  color: white;
+}
+.text-right {
+  text-align: right;
+}
+.full-height {
+  height: 100%;
+}
+.custom-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 20px;
+  color: white;
+  background-color: $secondary;
+  border-color: $secondary;
+}
+.custom-btn:focus {
+  outline: none;
+}
+.color-black {
+  color: black;
+}
