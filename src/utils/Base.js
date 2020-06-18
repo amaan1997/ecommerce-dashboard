@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Switch, Link } from 'react-router-dom';
+import { Switch, Link, Route } from 'react-router-dom';
 import { Layout, Drawer, Collapse } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
+import { connect } from 'react-redux';
 import routes from './Routes';
 import AuthenticatedRoute from './AuthenticatedRoute';
 
@@ -12,7 +13,7 @@ class Base extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDrawerOpen: true
+      isDrawerOpen: false
     };
   }
   drawerHandler = () => {
@@ -81,39 +82,46 @@ class Base extends Component {
                 )}
             </Drawer>
           </Sider>
-          <Layout className='site-layout'>
-            <Content className='site-layout-background xs-mr-10 xs-mt-10'>
-              <Switch>
-                {routes &&
-                  routes.length > 0 &&
-                  routes.map((route, index) => {
-                    if (route.subRoutes && route.subRoutes.length > 0) {
-                      return route.subRoutes.map(subRoute => (
-                        <AuthenticatedRoute
-                          key={index + 1}
-                          exact
-                          path={subRoute.path}
-                          component={subRoute.component}
-                        />
-                      ));
-                    } else {
-                      return (
-                        <AuthenticatedRoute
-                          key={index + 1}
-                          exact
-                          path={route.path}
-                          component={route.component}
-                        />
-                      );
-                    }
-                  })}
-              </Switch>
-            </Content>
-          </Layout>
+          {/* <Layout className='site-layout'> */}
+          <Content className='site-layout-background xs-mr-10 xs-mt-10'>
+            <Switch>
+              {routes &&
+                routes.length > 0 &&
+                routes.map((route, index) => {
+                  if (route.subRoutes && route.subRoutes.length > 0) {
+                    return route.subRoutes.map(subRoute => (
+                      <Route
+                        key={index + 1}
+                        exact
+                        path={subRoute.path}
+                        component={subRoute.component}
+                        user={this.props.user}
+                      />
+                    ));
+                  } else {
+                    return (
+                      <Route
+                        key={index + 1}
+                        exact
+                        path={route.path}
+                        component={route.component}
+                        user={this.props.user}
+                      />
+                    );
+                  }
+                })}
+            </Switch>
+          </Content>
+          {/* </Layout> */}
         </Layout>
       </div>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user
+  };
+};
 
-export default Base;
+export default connect(mapStateToProps, null)(Base);

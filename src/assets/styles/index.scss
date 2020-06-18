@@ -3,6 +3,7 @@
 @import 'variables.scss';
 @import 'spacer.scss';
 @import 'login.scss';
+@import 'product.scss';
 
 .d-flex {
   display: flex;
@@ -19,6 +20,9 @@
 }
 .justify-around {
   justify-content: space-around;
+}
+.justify-end {
+  justify-content: flex-end;
 }
 
 .text-center {
@@ -45,6 +49,9 @@
 .bg-color-secondary {
   background-color: $secondary;
 }
+.bg-grey {
+  background-color: $grey;
+}
 .text-white {
   color: white;
 }
@@ -67,4 +74,8 @@
 }
 .color-black {
   color: black;
+}
+.error-message {
+  color: $danger;
+  font-size: 12px;
 }

@@ -1,3 +1,3 @@
-const intialState = {};
+let intialState = {};
 
 export default intialState;

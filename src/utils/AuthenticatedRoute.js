@@ -1,12 +1,17 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { get } from 'lodash';
+import configureStore from '../redux/store';
 
-export default ({ component: Component, ...rest }) => (
+const store = configureStore();
+
+export default ({ component: Component, user, ...rest }) => (
   <Route
     {...rest}
     render={props => {
-      let jwt = localStorage.getItem('TOKEN');
-      return jwt ? (
+      console.log('user', user);
+
+      return user && user.data && Object.keys(user.data) ? (
         <Component {...props} />
       ) : (
         <Redirect

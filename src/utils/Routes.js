@@ -28,7 +28,7 @@ const routes = [
   {
     name: 'Dashboard',
     icon: <HomeOutlined />,
-    path: '/dashboard',
+    path: '/',
     component: Dashboard
   },
   {

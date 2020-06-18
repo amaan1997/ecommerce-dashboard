@@ -14,6 +14,8 @@ import 'antd/dist/antd.css';
 import 'react-notifications/lib/notifications.css';
 import './assets/styles/index.scss';
 import './utils/firebase';
+import AuthenticatedRoute from './utils/AuthenticatedRoute';
+import Dashboard from './components/Dashboard';
 
 const store = configureStore();
 
