@@ -6,7 +6,8 @@ import {
   BarChartOutlined,
   UserOutlined,
   DollarOutlined,
-  TransactionOutlined
+  TransactionOutlined,
+  TagOutlined
 } from '@ant-design/icons';
 
 // Component Import
@@ -23,6 +24,8 @@ import Reports from '../components/Report';
 import ManageUser from '../components/User/ManageUser';
 import ListUsers from '../components/User';
 import CreateUser from '../components/User/CreateUser';
+import ListCoupon from '../components/Coupon';
+import AddCoupon from '../components/Coupon/AddCoupon';
 
 const routes = [
   {
@@ -48,7 +51,7 @@ const routes = [
       {
         name: 'List Product',
         component: ListProduct,
-        path: '/product/list'
+        path: '/product'
       },
       {
         name: 'Add Product',
@@ -113,6 +116,22 @@ const routes = [
     icon: <BarChartOutlined />,
     path: '/reports',
     component: Reports
+  },
+  {
+    name: 'Coupons',
+    icon: <TagOutlined />,
+    subRoutes: [
+      {
+        name: 'Coupon List',
+        component: ListCoupon,
+        path: '/coupon'
+      },
+      {
+        name: 'Add Coupon',
+        component: AddCoupon,
+        path: '/coupon/add'
+      }
+    ]
   }
 ];
 

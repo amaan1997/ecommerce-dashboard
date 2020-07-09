@@ -5,6 +5,8 @@ import { MenuOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import routes from './Routes';
 import AuthenticatedRoute from './AuthenticatedRoute';
+import ProductDetail from '../components/Product/ProductDetail';
+import AddCoupon from '../components/Coupon/AddCoupon';
 
 const { Content, Sider } = Layout;
 const { Panel } = Collapse;
@@ -110,6 +112,16 @@ class Base extends Component {
                     );
                   }
                 })}
+              <Route
+                exact
+                path='/product/:productId'
+                component={ProductDetail}
+              />
+              <Route
+                exact
+                path='/coupon/edit/:couponId'
+                component={AddCoupon}
+              />
             </Switch>
           </Content>
           {/* </Layout> */}

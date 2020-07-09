@@ -20,7 +20,7 @@ import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ImageUploader } from '../shared';
-import * as productActions from '../../redux/actions/productAction';
+import * as categoryActions from '../../redux/actions/categoryAction';
 import { categoryTypes } from '../../utils/data';
 
 const { Option } = Select;
@@ -430,7 +430,7 @@ const mapStateToProps = state => {
     updateStatusResponse,
     categoryResponse,
     updateCategoryResponse
-  } = state.product;
+  } = state.category;
   return {
     addCategoryResponse: addCategoryResponse,
     categories: categories,
@@ -442,7 +442,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
   return {
-    actions: bindActionCreators({ ...productActions }, dispatch)
+    actions: bindActionCreators({ ...categoryActions }, dispatch)
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ListCategory);

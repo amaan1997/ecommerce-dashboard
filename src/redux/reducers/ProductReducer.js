@@ -3,75 +3,51 @@ import initialState from '../intialState';
 
 export default function productReducer(state = initialState, action) {
   switch (action.type) {
-    case actionTypes.ADD_CATEGORY_SUCCESS:
+    case actionTypes.ADD_PRODUCT_SUCCESS:
       return {
         ...state,
-        addCategoryResponse: { data: action.data, error: '' }
+        addProductResponse: { data: action.data, error: '' }
       };
-    case actionTypes.ADD_CATEGORY_FAILED:
+    case actionTypes.ADD_PRODUCT_FAILED:
       return {
         ...state,
-        addCategoryResponse: { data: '', error: action.error }
+        addProductResponse: { data: '', error: action.error }
       };
-    case actionTypes.FETCH_CATEGORY_SUCCESS:
+
+    case actionTypes.FETCH_PRODUCTS_SUCCESS:
       return {
         ...state,
-        categories: { data: action.data, error: '' }
+        productList: {
+          data: action.response.data,
+          totalCount: action.response.totalCount,
+          error: ''
+        }
       };
-    case actionTypes.FETCH_CATEGORY_FAILED:
+
+    case actionTypes.FETCH_PRODUCTS_FAILED:
       return {
         ...state,
-        categories: { data: [], error: action.error }
+        productList: { data: {}, totalCount: 1, error: action.error }
       };
-    case actionTypes.DELETE_CATEGORY_SUCCESS:
+    case actionTypes.DELETE_PRODUCT_SUCCESS:
       return {
         ...state,
-        deleteCategoryResponse: { data: action.data, error: '' }
+        deleteProductResponse: { data: action.data, error: '' }
       };
-    case actionTypes.DELETE_CATEGORY_FAILED:
+    case actionTypes.DELETE_PRODUCT_FAILED:
       return {
         ...state,
-        deleteCategoryResponse: { data: '', error: action.error }
+        deleteProductResponse: { data: '', error: action.error }
       };
-    case actionTypes.UPDATE_CATEGORY_STATUS_SUCCESS:
+    case actionTypes.GET_PRODUCT_DETAIL_SUCCESS:
       return {
         ...state,
-        updateStatusResponse: { data: action.data, error: '' }
+        productDetail: { data: action.data, error: '' }
       };
-    case actionTypes.UPDATE_CATEGORY_STATUS_FAILED:
+    case actionTypes.GET_PRODUCT_DETAIL_FAILED:
       return {
         ...state,
-        updateStatusResponse: { data: '', error: action.error }
-      };
-    case actionTypes.GET_CATEGORY_BY_ID_SUCCESS:
-      return {
-        ...state,
-        categoryResponse: { data: action.data, error: '' }
-      };
-    case actionTypes.GET_CATEGORY_BY_ID_FAILED:
-      return {
-        ...state,
-        categoryResponse: { data: '', error: action.error }
-      };
-    case actionTypes.UPDATE_CATEGORY_SUCCESS:
-      return {
-        ...state,
-        updateCategoryResponse: { data: action.data, error: '' }
-      };
-    case actionTypes.UPDATE_CATEGORY_FAILED:
-      return {
-        ...state,
-        updateCategoryResponse: { data: '', error: action.error }
-      };
-    case actionTypes.FETCH_CATEGORY_TYPES_SUCCESS:
-      return {
-        ...state,
-        categoryTypes: { data: action.data, error: '' }
-      };
-    case actionTypes.FETCH_CATEGORY_TYPES_FAILED:
-      return {
-        ...state,
-        categoryTypes: { data: '', error: action.error }
+        productDetail: { data: '', error: action.error }
       };
     default:
       return state;

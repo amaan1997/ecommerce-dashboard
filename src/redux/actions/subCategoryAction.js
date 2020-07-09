@@ -227,3 +227,35 @@ export const updateSubCategoryFailed = error => ({
   type: actionTypes.UPDATE_SUB_CATEGORY_FAILED,
   error
 });
+
+export const fetchSubCategoryTypes = () => {
+  return async dispatch => {
+    try {
+      let subCategories = await subCategoryCollection
+        .where('isDeleted', '==', false)
+        .get();
+
+      let response = [];
+      for (let subCategoryDoc of subCategories.docs) {
+        let result = { ...subCategoryDoc.data() };
+
+        response.push({
+          label: result.name,
+          value: subCategoryDoc.id,
+          categoryId: result.categoryId
+        });
+      }
+      dispatch(fetchSubCategoryTypesSuccess(response));
+    } catch (error) {
+      dispatch(fetchSubCategoryTypesFailed(error.message));
+    }
+  };
+};
+export const fetchSubCategoryTypesSuccess = data => ({
+  type: actionTypes.FETCH_SUB_CATEGORY_TYPES_SUCCESS,
+  data
+});
+export const fetchSubCategoryTypesFailed = error => ({
+  type: actionTypes.FETCH_SUB_CATEGORY_TYPES_FAILED,
+  error
+});

@@ -64,6 +64,17 @@ export default function subcategoryReducer(state = initialState, action) {
         updateSubCategoryResponse: { data: '', error: action.error }
       };
 
+    case actionTypes.FETCH_SUB_CATEGORY_TYPES_SUCCESS:
+      return {
+        ...state,
+        subCategoryTypes: { data: action.data, error: '' }
+      };
+    case actionTypes.FETCH_SUB_CATEGORY_TYPES_FAILED:
+      return {
+        ...state,
+        subCategoryTypes: { data: '', error: action.error }
+      };
+
     default:
       return state;
   }

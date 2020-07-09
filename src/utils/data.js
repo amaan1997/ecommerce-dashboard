@@ -20,4 +20,5 @@ const getFileNameByPath = filePath => {
     return fileName;
   }
 };
+
 export { categoryTypes, getFileNameByPath };

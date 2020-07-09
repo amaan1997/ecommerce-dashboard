@@ -1,235 +1,229 @@
 import * as actionTypes from './actionTypes';
-import 'firebase/auth';
 import {
   auth,
-  uploadImage,
   addDocumentAtRef,
-  getDownloadUrl,
-  updateDocumentAtRef,
-  storage,
-  isFileExist
+  uploadMultiImage,
+  getAllImageDownloadUrls
 } from '../../utils/firebase';
-import { categoryCollection } from '../../utils/collections';
-import { getFileNameByPath } from '../../utils/data';
+import {
+  productCollection,
+  subCategoryCollection,
+  vendorCollection,
+  categoryCollection
+} from '../../utils/collections';
 
-export const addCategory = data => {
+export const addProduct = data => {
   return async dispatch => {
     try {
-      const { categoryName, categoryImage, categoryType } = data;
+      const {
+        name,
+        brand,
+        actualPrice,
+        discount,
+        categoryId,
+        subCategoryId,
+        vendorId,
+        specification,
+        status,
+        productImages,
+        description,
+        selectedSize
+      } = data;
 
-      const categoryRef = categoryCollection.doc();
-      const categoryId = categoryRef.id;
-      const path = `${auth.currentUser.uid}/category/${categoryId}`;
+      const productRef = productCollection.doc();
+      const productId = productRef.id;
+      const path = `${auth.currentUser.uid}/products/${productId}`;
 
-      let categoryImageUrl = await uploadImage(categoryImage, path);
+      const imageUrls = await uploadMultiImage(productImages, path);
 
-      await addDocumentAtRef(categoryRef, {
-        name: categoryName,
-        imageUrl: categoryImageUrl,
-        type: categoryType,
-        isActive: true,
-        isDeleted: false
-      });
-      dispatch(addCategorySuccess('Successfully Category Added!'));
-    } catch (error) {
-      dispatch(addCategoryFailed(error.message));
-    }
-  };
-};
-export const addCategorySuccess = data => ({
-  type: actionTypes.ADD_CATEGORY_SUCCESS,
-  data
-});
-export const addCategoryFailed = error => ({
-  type: actionTypes.ADD_CATEGORY_FAILED,
-  error
-});
-
-export const fetchCategory = () => {
-  return async dispatch => {
-    try {
-      let categories = await categoryCollection
+      let product = await productCollection
         .where('isDeleted', '==', false)
+        .orderBy('index', 'desc')
+        .limit(1)
         .get();
 
-      let response = [];
-      for (let categoryDoc of categories.docs) {
-        let result = { ...categoryDoc.data() };
-        let imageUrl = await getDownloadUrl(result.imageUrl);
-        result.imageUrl = imageUrl;
-        let active = result.isActive;
-        result.isActive = {
-          active,
-          categoryId: categoryDoc.id
-        };
-        response.push({
-          ...result,
-          categoryId: categoryDoc.id
-        });
+      let index = 1;
+
+      if (product && product.docs && product.docs[0]) {
+        index = product.docs[0].data().index + 1;
       }
-      dispatch(fetchCategorySuccess(response));
+      let finalPrice = Math.round(
+        actualPrice - (actualPrice * discount) / 100,
+        0
+      );
+      await addDocumentAtRef(productRef, {
+        name,
+        brand,
+        actualPrice,
+        discount,
+        finalPrice,
+        categoryId,
+        subCategoryId,
+        vendorId,
+        specification,
+        status,
+        productImages: imageUrls,
+        description,
+        sizeAvailable: selectedSize,
+        isDeleted: false,
+        index: index
+      });
+      dispatch(addProductSuccess('Product Added Successfully!'));
     } catch (error) {
-      dispatch(fetchCategoryFailed(error.message));
+      dispatch(addProductFailed(error.message));
     }
   };
 };
-export const fetchCategorySuccess = data => ({
-  type: actionTypes.FETCH_CATEGORY_SUCCESS,
+export const addProductSuccess = data => ({
+  type: actionTypes.ADD_PRODUCT_SUCCESS,
   data
 });
-export const fetchCategoryFailed = error => ({
-  type: actionTypes.FETCH_CATEGORY_FAILED,
+export const addProductFailed = error => ({
+  type: actionTypes.ADD_PRODUCT_FAILED,
   error
 });
 
-export const deleteCategory = categoryId => {
+export const fetchProducts = data => {
+  const { pageNumber, pageSize } = data;
   return async dispatch => {
     try {
-      let categoryRef = await categoryCollection.doc(categoryId);
+      let product = await productCollection
+        .where('isDeleted', '==', false)
+        .orderBy('index', 'desc')
+        .limit(1)
+        .get();
 
-      await categoryRef.update({
+      let index = 1;
+      if (product && product.docs && product.docs[0]) {
+        index = product.docs[0].data().index;
+      }
+      console.log('data>>', data);
+      console.log('index>>', index);
+
+      const startIndex = index - (pageNumber - 1) * pageSize;
+      console.log('startIndex>>', startIndex);
+      let products = await productCollection
+        .where('isDeleted', '==', false)
+        .orderBy('index', 'desc')
+        .startAt(startIndex)
+        .limit(pageSize)
+        .get();
+
+      console.log('products1>>>>', products);
+      const productRef = await productCollection
+        .where('isDeleted', '==', false)
+        .get();
+      const size = productRef.size;
+
+      let response = [];
+      for (let productDoc of products.docs) {
+        let result = { ...productDoc.data() };
+
+        response.push({
+          name: result.name,
+          brand: result.brand,
+          actualPrice: result.actualPrice,
+          discount: result.discount,
+          sizeAvailable: result.sizeAvailable,
+          status: result.status,
+          finalPrice: result.finalPrice,
+          productId: productDoc.id
+        });
+      }
+      dispatch(fetchProductsSuccess({ data: response, totalCount: size }));
+    } catch (error) {
+      console.log('error', error.message);
+      dispatch(fetchProductsFailed(error.message));
+    }
+  };
+};
+export const fetchProductsSuccess = response => ({
+  type: actionTypes.FETCH_PRODUCTS_SUCCESS,
+  response
+});
+export const fetchProductsFailed = error => ({
+  type: actionTypes.FETCH_PRODUCTS_FAILED,
+  error
+});
+
+export const deleteProduct = productId => {
+  return async dispatch => {
+    try {
+      let productRef = await productCollection.doc(productId);
+
+      await productRef.update({
         isDeleted: true
       });
-      dispatch(deleteCategorySuccess('Category deleted successfully!'));
+      dispatch(deleteProductSuccess('Product deleted successfully!'));
     } catch (error) {
-      dispatch(deleteCategoryFailed(error.message));
+      dispatch(deleteProductFailed(error.message));
     }
   };
 };
 
-export const deleteCategorySuccess = data => ({
-  type: actionTypes.DELETE_CATEGORY_SUCCESS,
+export const deleteProductSuccess = data => ({
+  type: actionTypes.DELETE_PRODUCT_SUCCESS,
   data
 });
-export const deleteCategoryFailed = error => ({
-  type: actionTypes.DELETE_CATEGORY_FAILED,
+export const deleteProductFailed = error => ({
+  type: actionTypes.DELETE_PRODUCT_FAILED,
   error
 });
-
-export const updateCategoryStatus = (categoryId, isActive) => {
+export const getProductDetail = productId => {
+  console.log('productId', productId);
   return async dispatch => {
     try {
-      let categoryRef = await categoryCollection.doc(categoryId);
+      let productRef = await productCollection.doc(productId).get();
+      let categoryName = '';
+      let subCategoryName = '';
+      let vendorName = '';
 
-      await updateDocumentAtRef(categoryRef, { isActive: !isActive });
-
-      dispatch(
-        updateCategoryStatusSuccess('Category status updated successfully!')
-      );
-    } catch (error) {
-      dispatch(updateCategoryStatusFailed(error.message));
-    }
-  };
-};
-
-export const updateCategoryStatusSuccess = data => ({
-  type: actionTypes.UPDATE_CATEGORY_STATUS_SUCCESS,
-  data
-});
-export const updateCategoryStatusFailed = error => ({
-  type: actionTypes.UPDATE_CATEGORY_STATUS_FAILED,
-  error
-});
-
-export const getCategoryById = categoryId => {
-  return async dispatch => {
-    try {
-      let categoryRef = await categoryCollection.doc(categoryId).get();
-
-      let response = categoryRef.data();
-
-      let category = {};
-
-      const imageUrl = await getDownloadUrl(response.imageUrl);
-      const fileName = getFileNameByPath(response.imageUrl);
-      category.fileList = [
-        { uid: -1, name: fileName, status: 'done', url: imageUrl }
-      ];
-      category.categoryName = response.name;
-      category.categoryType = response.type;
-
-      dispatch(getCategoryByIdSuccess(category));
-    } catch (error) {
-      dispatch(getCategoryByIdFailed(error.message));
-    }
-  };
-};
-
-export const getCategoryByIdSuccess = data => ({
-  type: actionTypes.GET_CATEGORY_BY_ID_SUCCESS,
-  data
-});
-export const getCategoryByIdFailed = error => ({
-  type: actionTypes.GET_CATEGORY_BY_ID_FAILED,
-  error
-});
-
-export const updateCategory = (data, categoryId) => {
-  return async dispatch => {
-    try {
-      const { categoryName, categoryImage, categoryType } = data;
-      const categoryRef = await categoryCollection.doc(categoryId);
-      const categoryDoc = await categoryCollection.doc(categoryId).get();
-      const response = categoryDoc.data();
-      const fileName = getFileNameByPath(response.imageUrl);
-      let result = {
-        name: categoryName,
-        type: categoryType
-      };
-      if (fileName === categoryImage.name) {
-        await updateDocumentAtRef(categoryRef, result);
-      } else {
-        if (isFileExist(response.imageUrl)) {
-          await storage.ref(response.imageUrl).delete();
-        }
-        const path = `${auth.currentUser.uid}/category/${categoryRef.id}`;
-        const categoryImageUrl = await uploadImage(categoryImage, path);
-        result.imageUrl = categoryImageUrl;
-        await updateDocumentAtRef(categoryCollection.doc(categoryId), result);
+      let result = productRef.data();
+      let categoryRef = await categoryCollection.doc(result.categoryId).get();
+      if (categoryRef && categoryRef.data()) {
+        categoryName = categoryRef.data().name;
       }
-      dispatch(updateCategorySuccess('Successfully updated Category'));
-    } catch (error) {
-      dispatch(updateCategoryFailed(error.message));
-    }
-  };
-};
-
-export const updateCategorySuccess = data => ({
-  type: actionTypes.UPDATE_CATEGORY_SUCCESS,
-  data
-});
-export const updateCategoryFailed = error => ({
-  type: actionTypes.UPDATE_CATEGORY_FAILED,
-  error
-});
-
-export const fetchCategoryTypes = () => {
-  return async dispatch => {
-    try {
-      let categories = await categoryCollection
-        .where('isDeleted', '==', false)
+      let subCategoryRef = await subCategoryCollection
+        .doc(result.subCategoryId)
         .get();
-
-      let response = [];
-      for (let categoryDoc of categories.docs) {
-        let result = { ...categoryDoc.data() };
-
-        response.push({
-          label: result.name,
-          value: categoryDoc.id
-        });
+      if (subCategoryRef && subCategoryRef.data()) {
+        subCategoryName = subCategoryRef.data().name;
       }
-      dispatch(fetchCategoryTypesSuccess(response));
+      let vendorRef = await vendorCollection.doc(result.vendorId).get();
+      if (vendorRef && vendorRef.data()) {
+        vendorName = vendorRef.data().name;
+      }
+
+      result['imageUrls'] = await getAllImageDownloadUrls(result.productImages);
+
+      let data = {
+        name: result.name,
+        brand: result.brand,
+        actualPrice: result.actualPrice,
+        discount: result.discount,
+        imageUrls: result.imageUrls,
+        categoryName: categoryName,
+        description: result.description,
+        sizeAvailable: result.sizeAvailable,
+        specification: result.specification,
+        status: result.status,
+        subCategoryName: subCategoryName,
+        vendorName: vendorName,
+        finalPrice: result.finalPrice
+      };
+      console.log('data>>>', data);
+      dispatch(getProductDetailSuccess(data));
     } catch (error) {
-      dispatch(fetchCategoryTypesFailed(error.message));
+      dispatch(getProductDetailFailed(error.message));
     }
   };
 };
-export const fetchCategoryTypesSuccess = data => ({
-  type: actionTypes.FETCH_CATEGORY_TYPES_SUCCESS,
+
+export const getProductDetailSuccess = data => ({
+  type: actionTypes.GET_PRODUCT_DETAIL_SUCCESS,
   data
 });
-export const fetchCategoryTypesFailed = error => ({
-  type: actionTypes.FETCH_CATEGORY_TYPES_FAILED,
+export const getProductDetailFailed = error => ({
+  type: actionTypes.GET_PRODUCT_DETAIL_FAILED,
   error
 });

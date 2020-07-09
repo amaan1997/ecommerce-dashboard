@@ -9,15 +9,17 @@ import {
   message,
   Spin,
   Select,
-  Popconfirm
+  Popconfirm,
+  Card,
+  Breadcrumb
 } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, HomeOutlined } from '@ant-design/icons';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ImageUploader } from '../shared';
 import * as subCategoryActions from '../../redux/actions/subCategoryAction';
-import * as productActions from '../../redux/actions/productAction';
+import * as categoryActions from '../../redux/actions/categoryAction';
 import { categoryTypes } from '../../utils/data';
 
 const { Option } = Select;
@@ -445,20 +447,33 @@ class ListSubCategory extends React.Component {
     const columns = this.getSubCategoryColumns();
     return (
       <div className='xs-mt-40 xs-ml-20 xs-mr-20'>
-        <div className='d-flex justify-end'>
-          <button
-            className='custom-btn product-btn'
-            onClick={this.handleAddSubCategoryModal}
-          >
-            ADD SUB CATEGORY
-          </button>
-        </div>
-        <Table
-          columns={columns}
-          dataSource={subCategories}
-          className='xs-mt-20'
-        />
+        <div className='d-flex justify-between'>
+          <div className='text-bold font-24'>SUB CATEGORY</div>
+          <Breadcrumb>
+            <Breadcrumb.Item href='/'>
+              <HomeOutlined />
+            </Breadcrumb.Item>
 
+            <Breadcrumb.Item>SubCategory List</Breadcrumb.Item>
+          </Breadcrumb>
+        </div>
+
+        <Card className='xs-mt-20 '>
+          <div className='d-flex justify-between'>
+            <div className='text-bold font-24'>Sub Category List</div>
+            <button
+              className='custom-btn product-btn'
+              onClick={this.handleAddSubCategoryModal}
+            >
+              ADD SUB CATEGORY
+            </button>
+          </div>
+          <Table
+            columns={columns}
+            dataSource={subCategories}
+            className='xs-mt-20'
+          />
+        </Card>
         <AddCategoryForm
           visible={addSubCategoryModal}
           onCreate={this.addSubCategoryHandler}
@@ -491,13 +506,13 @@ const mapStateToProps = state => {
     deleteSubCategoryResponse: deleteSubCategoryResponse,
     subCategoryResponse: subCategoryResponse,
     updateSubCategoryResponse: updateSubCategoryResponse,
-    categoryTypes: state.product.categoryTypes
+    categoryTypes: state.category.categoryTypes
   };
 };
 const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(
-      { ...productActions, ...subCategoryActions },
+      { ...categoryActions, ...subCategoryActions },
       dispatch
     )
   };

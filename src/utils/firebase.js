@@ -39,6 +39,27 @@ export const uploadImage = (imageFile, path) => {
     }
   });
 };
+export const uploadMultiImage = async (imageFiles, basePath) => {
+  let imageUrls = [];
+
+  if (imageFiles && imageFiles.length > 0) {
+    let imageFilePromise = imageFiles.map(file => {
+      const path = `${basePath}/${file.name}`;
+      const imageRef = storageRef.child(path);
+
+      return imageRef.put(file.originFileObj).then(snapshot => {
+        if (snapshot.state === 'success') {
+          return snapshot.metadata.fullPath;
+        } else {
+          return '';
+        }
+      });
+    });
+    imageUrls = await Promise.all(imageFilePromise);
+  }
+  console.log('imageUrls', imageUrls);
+  return imageUrls;
+};
 export const isFileExist = async filePath => {
   let fileRef = storageRef.child(filePath);
   const downloadUrl = await fileRef.getDownloadURL();
@@ -76,4 +97,14 @@ export const updateDocumentAtRef = async (docRef, data) => {
     updatedBy: auth.currentUser.email
   };
   await docRef.update(result);
+};
+
+export const getAllImageDownloadUrls = async imageUrls => {
+  let downloadUrls = [];
+  for (let url of imageUrls) {
+    const fileRef = storageRef.child(url);
+    const path = await fileRef.getDownloadURL();
+    downloadUrls.push(path);
+  }
+  return downloadUrls;
 };

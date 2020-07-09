@@ -12,6 +12,7 @@ import NoPageFound from './components/NoPageFound';
 import './App.css';
 import 'antd/dist/antd.css';
 import 'react-notifications/lib/notifications.css';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import './assets/styles/index.scss';
 import './utils/firebase';
 import AuthenticatedRoute from './utils/AuthenticatedRoute';
